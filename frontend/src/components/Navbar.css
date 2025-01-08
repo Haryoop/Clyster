@@ -1,0 +1,42 @@
+/* Navbar.css */
+.navbar {
+    position: fixed; /* Fixes the navbar to the top of the page */
+    top: 0; /* Aligns it to the top */
+    left: 0;
+    width: 100%; /* Makes the navbar full width */
+    background-color: #333; /* Dark background color */
+    display: flex;
+    justify-content: center; /* Centers the links horizontally */
+    align-items: center; /* Aligns items vertically */
+    padding: 0.5rem 0; /* Adds some padding */
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000; /* Ensures navbar stays above other content */
+  }
+  
+  .navbar-links {
+    display: flex; /* Makes the links horizontal */
+    list-style-type: none; /* Removes bullets from the list */
+    margin: 0;
+    padding: 0;
+  }
+  
+  .navbar-links li {
+    margin: 0 1rem; /* Adds spacing between links */
+  }
+  
+  .navbar-links a {
+    text-decoration: none; /* Removes underline */
+    color: white; /* Default link color */
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+  }
+  
+  .navbar-links a:hover {
+    color: #00bcd4; /* Hover effect color */
+  }
+  
+  .active-link {
+    font-weight: bold; /* Highlights the active page */
+    color: #00bcd4; /* Active link color */
+  }
+  
