@@ -1,0 +1,7 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background rectangle -->
+  <rect x="12" y="12" width="232" height="232" rx="20" fill="#6415FF"/>
+  
+  <!-- Adjusted "C" -->
+  <text x="50%" y="55%" font-family="Arial, sans-serif" font-size="160" font-weight="bold" fill="white" text-anchor="middle" dominant-baseline="middle">C</text>
+</svg>
