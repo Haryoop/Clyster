@@ -1,16 +1,12 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
-import { useNavigate } from "react-router-dom";
 import { Container as ContainerBase } from "components/misc/Layouts";
 import tw from "twin.macro";
 import styled from "styled-components";
-import { css } from "styled-components/macro"; //eslint-disable-line
 import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
-//import googleIconImageSrc from "images/google-icon.png";
-//import twitterIconImageSrc from "images/twitter-icon.png";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
-//import { NavLinks } from "components/headers/light";
+import "react-datepicker/dist/react-datepicker.css";
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -20,12 +16,15 @@ const LogoImage = tw.img`h-12 mx-auto`;
 const MainContent = tw.div`mt-12 flex flex-col items-center`;
 const Heading = tw.h1`text-2xl xl:text-3xl font-extrabold`;
 const FormContainer = tw.div`w-full flex-1 mt-8`;
-
-const DividerTextContainer = tw.div`my-12 border-b text-center relative`;
-const DividerText = tw.div`leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform -translate-y-1/2 absolute inset-x-0 top-1/2 bg-transparent`;
-
 const Form = tw.form`mx-auto max-w-xs`;
-//const Input = tw.input`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5 first:mt-0`;
+
+const InputContainer = tw.div`mt-5`;
+const Input = styled.input`
+  ${tw`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white`}
+  ${({ hasError }) => hasError && tw`border-red-500`}
+`;
+
+const ErrorText = tw.p`text-red-500 text-xs mt-1`;
 
 const SubmitButton = styled.button`
   ${tw`mt-5 tracking-wide font-semibold bg-primary-500 text-gray-100 w-full py-4 rounded-lg hover:bg-primary-900 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}
@@ -46,16 +45,99 @@ const IllustrationImage = styled.div`
 export default ({
   logoLinkUrl = "/",
   illustrationImageSrc = illustration,
-  headingText = "Créer un compte chez Clyster",
+  headingText = "Créer un compte d'entreprise chez Clyster",
   submitButtonText = "Sign Up",
   SubmitButtonIcon = SignUpIcon,
   tosUrl = "#",
   privacyPolicyUrl = "#",
   signInUrl = "#",
-  redirectUser = "/signupuser",
-  redirectCompany = "/signupcompany"
 }) => {
-  const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    birthDate: null,
+  });
+
+  const [errors, setErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
+
+  // Handle input change
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+
+    setTouchedFields((prevTouched) => ({
+      ...prevTouched,
+      [name]: true,
+    }));
+
+    // Clear the error when the user types something
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: "",
+    }));
+  };
+
+  // Validate all fields in real-time
+  const validateAllFields = useCallback(() => {
+    let newErrors = {};
+
+    // Validate required fields
+    Object.keys(formData).forEach((key) => {
+      if (key !== "confirmPassword" && !formData[key] && touchedFields[key]) {
+        newErrors[key] = "Ce champ est nécessaire";
+      }
+    });
+
+    // Password confirmation validation
+    if (formData.password !== formData.confirmPassword && touchedFields.confirmPassword) {
+      newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
+    }
+
+    setErrors(newErrors);
+  }, [formData, touchedFields]);
+
+  // Run validation whenever formData or touchedFields changes
+  useEffect(() => {
+    validateAllFields();
+  }, [formData, touchedFields, validateAllFields]);
+
+  const handleBlur = (e) => {
+    const { name } = e.target;
+    setTouchedFields((prevTouched) => ({
+      ...prevTouched,
+      [name]: true,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    let newErrors = {};
+
+    Object.keys(formData).forEach((key) => {
+      if (!formData[key]) {
+        newErrors[key] = "Ce champ est nécessaire";
+      }
+    });
+
+    // Password confirmation check on submit
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length === 0) {
+      console.log("Form submitted successfully!", formData);
+      // Submit form data here (e.g., to the backend)
+    }
+  };
 
   return (
     <AnimationRevealPage>
@@ -68,40 +150,63 @@ export default ({
             <MainContent>
               <Heading>{headingText}</Heading>
               <FormContainer>
-                <DividerTextContainer>
-                  <DividerText>Quel type de compte aimeriez vous créer</DividerText>
-                </DividerTextContainer>
-                <Form>
-                  
-                  {/* Redirect Button 1 */}
-                  <SubmitButton type="button" onClick={() => navigate(redirectUser)}>
-                    <SubmitButtonIcon className="icon" />
-                    <span className="text">Un utilisateur</span>
-                  </SubmitButton>
-                  
-                  {/* Redirect Button 2 */}
-                  <SubmitButton type="button" onClick={() => navigate(redirectCompany)}>
-                    <SubmitButtonIcon className="icon" />
-                    <span className="text">Une entreprise</span>
-                  </SubmitButton>
-                  
-                  <p tw="mt-6 text-xs text-gray-600 text-center">
-                    I agree to abide by treact's{" "}
-                    <a href={tosUrl} tw="border-b border-gray-500 border-dotted">
-                      Terms of Service
-                    </a>{" "}
-                    and its{" "}
-                    <a href={privacyPolicyUrl} tw="border-b border-gray-500 border-dotted">
-                      Privacy Policy
-                    </a>
-                  </p>
+                <Form onSubmit={handleSubmit}>
+                  <InputContainer>
+                    <Input
+                      type="text"
+                      name="companyName"
+                      placeholder="Nom de l'entreprise"
+                      value={formData.companyName}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.companyName}
+                    />
+                    {errors.companyName && <ErrorText>{errors.companyName}</ErrorText>}
+                  </InputContainer>
 
-                  <p tw="mt-8 text-sm text-gray-600 text-center">
-                    Already have an account?{" "}
-                    <a href={signInUrl} tw="border-b border-gray-500 border-dotted">
-                      Sign In
-                    </a>
-                  </p>
+                  <InputContainer>
+                    <Input
+                      type="email"
+                      name="email"
+                      placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.email}
+                    />
+                    {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                  </InputContainer>
+
+                  <InputContainer>
+                    <Input
+                      type="password"
+                      name="password"
+                      placeholder="Mot de passe"
+                      value={formData.password}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.password}
+                    />
+                    {errors.password && <ErrorText>{errors.password}</ErrorText>}
+                  </InputContainer>
+
+                  <InputContainer>
+                    <Input
+                      type="password"
+                      name="confirmPassword"
+                      placeholder="Confirmer mot de passe"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.confirmPassword}
+                    />
+                    {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
+                  </InputContainer>
+
+                  <SubmitButton type="submit">
+                    <SubmitButtonIcon className="icon" />
+                    <span className="text">{submitButtonText}</span>
+                  </SubmitButton>
                 </Form>
               </FormContainer>
             </MainContent>

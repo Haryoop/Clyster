@@ -22,7 +22,17 @@ def add_user(first_name: str, last_name: str, birth_date: date):
         "birth_date": birth_date  # Changed field to birth_date
     }
     inserted_id = collection.insert_one(test_document).inserted_id
-    print(f"Inserted document with ID: {inserted_id}")
+    print(f"Inserted user with ID: {inserted_id}")
+
+def add_company(company_name: str, email: str, password: str):
+    collection = Clyster.user
+    test_document = {
+        "company_name": company_name,
+        "email": email,
+        "passwoord": password
+    }
+    inserted_id = collection.insert_one(test_document).inserted_id
+    print(f"Inserted company with ID: {inserted_id}")
 
 def get_by_fname(first_name):
     user = user_collection.find_one({"first_name": first_name})
