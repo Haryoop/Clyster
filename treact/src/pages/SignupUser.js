@@ -9,6 +9,8 @@ import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { subYears } from "date-fns";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -22,6 +24,11 @@ const Form = tw.form`mx-auto max-w-xs`;
 
 const InputContainer = tw.div`mt-5`;
 const Input = styled.input`
+  ${tw`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white`}
+  ${({ hasError }) => hasError && tw`border-red-500`}
+`;
+
+const Select = styled.select`
   ${tw`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white`}
   ${({ hasError }) => hasError && tw`border-red-500`}
 `;
@@ -44,6 +51,14 @@ const IllustrationImage = styled.div`
   ${tw`m-12 xl:m-16 w-full max-w-lg bg-contain bg-center bg-no-repeat`}
 `;
 
+// Métier Enum (for dropdown options)
+const Metier = {
+  DEVELOPPEUR: "développeur",
+  RH: "responsable RH",
+  MARKETING: "marketing",
+  VENTE: "vente",
+};
+
 export default ({
   logoLinkUrl = "/",
   illustrationImageSrc = illustration,
@@ -61,10 +76,12 @@ export default ({
     password: "",
     confirmPassword: "",
     birthDate: null,
+    métier: "", // Add métier to the form state
   });
 
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const maxDate = subYears(new Date(), 14);
 
@@ -86,6 +103,7 @@ export default ({
       ...prevErrors,
       [name]: "",
     }));
+    
   };
 
   // Handle date change for birthDate
@@ -131,8 +149,9 @@ export default ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let newErrors = {};
 
+    // Validate the fields first
+    let newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = "Ce champ est nécessaire";
@@ -147,8 +166,33 @@ export default ({
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted successfully!", formData);
-      // Submit form data here (e.g., to the backend)
+      // Prepare user data for submission
+      const userData = {
+        first_name: formData.firstName,
+        last_name: formData.lastName,
+        email: formData.email,
+        password: formData.password, // Ensure password is correct
+        métier: formData.métier,
+        birth_date: formData.birthDate ? formData.birthDate.toISOString().split('T')[0] : null, // Convert date to string
+      };
+
+      // Use fetch to send data to the Flask API
+      fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData), // Send the form data as JSON
+      })
+        .then((response) => response.json()) // Parse the response as JSON
+        .then((data) => {
+          console.log('User added successfully!', data);
+          navigate("/login"); // Add this line to redirect to login page
+        })
+        .catch((error) => {
+          console.error('There was an error adding the user!', error);
+          // Handle the error accordingly (e.g., show an error message)
+        });
     }
   };
 
@@ -245,6 +289,24 @@ export default ({
                       hasError={errors.confirmPassword}
                     />
                     {errors.confirmPassword && <ErrorText>{errors.confirmPassword}</ErrorText>}
+                  </InputContainer>
+
+                  <InputContainer>
+                    <Select
+                      name="métier"
+                      value={formData.métier}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.métier}
+                    >
+                      <option value="">Sélectionnez un métier</option>
+                      {Object.entries(Metier).map(([key, value]) => (
+                        <option key={key} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                    </Select>
+                    {errors.métier && <ErrorText>{errors.métier}</ErrorText>}
                   </InputContainer>
 
                   <SubmitButton type="submit">

@@ -1,8 +1,5 @@
 import models.user as user
 import os
-#person.add_person("haroun", "jemaa", 25)
-#person.UpdatePerson("fathi")
-#person.deletePerson("6761de1a687e6896e67fbf4f")
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, create_access_token
 from authentication.routes import api
 from flask import Flask
