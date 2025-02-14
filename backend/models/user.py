@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from enum import Enum
 from typing import List, Optional
 from bson.objectid import ObjectId
+import bcrypt
 
 client = MongoClient(connection_string)
 Clyster = client.Clyster
@@ -67,6 +68,21 @@ def add_user(first_name: str, last_name: str, email: str, password: str, métier
 
 def add_company(company_name: str, email: str, password: str, secteur: Secteur) -> str:
     """Add a new company to the collection."""
+    # Hash the password
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
+    
+    company_document = {
+        "company_name": company_name,
+        "email": email,
+        "password": hashed_password.decode('utf-8'),
+        "type": Type.ENTREPRISE.value,
+        "secteur": secteur.value
+    }
+    
+    result = user_collection.insert_one(company_document)
+    print(f"Inserted company with ID: {result.inserted_id}")
+    return str(result.inserted_id)
+    """Add a new company to the collection."""
     if not isinstance(secteur, Secteur):
         raise ValueError("Invalid secteur. It must be an instance of Secteur enum.")
     company_document = {
@@ -79,6 +95,26 @@ def add_company(company_name: str, email: str, password: str, secteur: Secteur) 
     result = user_collection.insert_one(company_document)
     print(f"Inserted company with ID: {result.inserted_id}")
     return str(result.inserted_id)
+
+def login(email: str, password: str) -> bool:
+    """Authenticate a user by verifying email and password."""
+    user = user_collection.find_one({"email": email})
+
+    if user is None:
+        print(f"User with email {email} not found in the database.")
+        return False  # User does not exist
+
+    print(f"User found: {user}")  # Debugging line
+
+    hashed_password = user["password"].encode('utf-8')  # Convert stored password to bytes
+    password = password.encode('utf-8')  # Convert input password to bytes
+
+    if bcrypt.checkpw(password, hashed_password):  # Verify password
+        print("Login successful.")
+        return True  # Authentication successful
+    else:
+        print("Incorrect password.")
+        return False  # Authentication failed
 
 def get_user_by_first_name(first_name: str) -> Optional[dict]:
     """Retrieve a user by their first name."""

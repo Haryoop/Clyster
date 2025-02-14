@@ -43,6 +43,7 @@ def add_user():
 
     # Create new user document
     new_user = {
+        "type": "employe",
         "first_name": data["first_name"],
         "last_name": data["last_name"],
         "email": data["email"],
@@ -55,7 +56,28 @@ def add_user():
     result = user_collection.insert_one(new_user)
     return jsonify({"message": "User added", "id": str(result.inserted_id)}), 201
 
+# Route: Add a new company
+@user_bp.route('/companies', methods=['POST'])
+def add_company():
+    data = request.json
+    required_fields = ["company_name", "email", "password", "secteur"]
+    for field in required_fields:
+        if not data.get(field):
+            return jsonify({"error": f"Missing required field: {field}"}), 400
 
+    # Hash the password
+    hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
+    # Create new user document
+    new_user = {
+        "type": "entreprise",
+        "company_name": data["company_name"],
+        "email": data["email"],
+        "password": hashed_password.decode('utf-8'),  # Store hashed password as a string
+        "secteur": data["secteur"]
+    }
+    # Insert the new user into the database
+    result = user_collection.insert_one(new_user)
+    return jsonify({"message": "User added", "id": str(result.inserted_id)}), 201
 # Route: Update a user by ID
 @user_bp.route('/users/<string:user_id>', methods=['PUT'])
 def update_user(user_id):

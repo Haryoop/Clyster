@@ -17,10 +17,16 @@ const injectContext = (PassedComponent) => {
                     })),
             });
 
-            // Synchronize token from sessionStorage on initial load
+            // Synchronize token and email from sessionStorage on initial load
             const token = sessionStorage.getItem("token");
+            //const email = sessionStorage.getItem("email");
+
             if (token) {
                 initialState.store.token = token; // Update the store with the token
+            }
+
+            if (email) {
+                initialState.store.email = email; // Update the store with the email
             }
 
             return initialState;

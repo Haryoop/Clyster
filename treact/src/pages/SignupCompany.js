@@ -7,6 +7,8 @@ import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
 import "react-datepicker/dist/react-datepicker.css";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
+
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -41,6 +43,16 @@ const IllustrationImage = styled.div`
   ${props => `background-image: url("${props.imageSrc}");`}
   ${tw`m-12 xl:m-16 w-full max-w-lg bg-contain bg-center bg-no-repeat`}
 `;
+const Select = styled.select`
+  ${tw`w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white`}
+  ${({ hasError }) => hasError && tw`border-red-500`}
+`;
+
+const Secteur = {
+  INFORMATIQUE: "informatique",
+  SANTE: "santé",
+  ASSURANCE: "assurance"
+};
 
 export default ({
   logoLinkUrl = "/",
@@ -53,16 +65,16 @@ export default ({
   signInUrl = "#",
 }) => {
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    company_name: "",
     email: "",
     password: "",
-    confirmPassword: "",
-    birthDate: null,
+    confirmPassword: ""
   });
 
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
+  const navigate = useNavigate(); // Initialize useNavigate
+  
 
   // Handle input change
   const handleChange = (e) => {
@@ -118,8 +130,9 @@ export default ({
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let newErrors = {};
 
+    // Validate the fields first
+    let newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
         newErrors[key] = "Ce champ est nécessaire";
@@ -134,8 +147,27 @@ export default ({
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      console.log("Form submitted successfully!", formData);
-      // Submit form data here (e.g., to the backend)
+      const userData = {
+        company_name: formData.company_name,
+        email: formData.email,
+        password: formData.password,
+        secteur: formData.secteur,
+      };
+      fetch('http://localhost:5000/api/companies', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          console.log('Company added successfully!', data);
+          navigate("/login");
+        })
+        .catch((error) => {
+          console.error('There was an error adding the company!', error);
+        });
     }
   };
 
@@ -154,14 +186,14 @@ export default ({
                   <InputContainer>
                     <Input
                       type="text"
-                      name="companyName"
+                      name="company_name"
                       placeholder="Nom de l'entreprise"
-                      value={formData.companyName}
+                      value={formData.company_name}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      hasError={errors.companyName}
+                      hasError={errors.company_name}
                     />
-                    {errors.companyName && <ErrorText>{errors.companyName}</ErrorText>}
+                    {errors.company_name && <ErrorText>{errors.company_name}</ErrorText>}
                   </InputContainer>
 
                   <InputContainer>
@@ -175,6 +207,23 @@ export default ({
                       hasError={errors.email}
                     />
                     {errors.email && <ErrorText>{errors.email}</ErrorText>}
+                  </InputContainer>
+                  <InputContainer>
+                    <Select
+                      name="secteur"
+                      value={formData.secteur}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      hasError={errors.secteur}
+                    >
+                      <option value="">Sélectionnez un secteur</option>
+                      {Object.entries(Secteur).map(([key, value]) => (
+                        <option key={key} value={value}>
+                          {value}
+                        </option>
+                      ))}
+                    </Select>
+                    {errors.métier && <ErrorText>{errors.secteur}</ErrorText>}
                   </InputContainer>
 
                   <InputContainer>
