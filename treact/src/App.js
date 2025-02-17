@@ -85,8 +85,8 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 // import EventLandingPage from "demos/EventLandingPage.js";
 // import HotelTravelLandingPage from "demos/HotelTravelLandingPage.js";
 // import AgencyLandingPage from "demos/AgencyLandingPage.js";
- import SaaSProductLandingPage from "demos/SaaSProductLandingPage.js";
-// import RestaurantLandingPage from "demos/RestaurantLandingPage.js";
+import SaaSProductLandingPage from "demos/SaaSProductLandingPage.js";
+import EmployeesListPage from "demos/EmployeesList.js";
 // import ServiceLandingPage from "demos/ServiceLandingPage.js";
 // import HostingCloudLandingPage from "demos/HostingCloudLandingPage.js";
 
@@ -101,7 +101,7 @@ import ContactUsPage from "pages/ContactUs.js";
 // import BlogIndexPage from "pages/BlogIndex.js";
 // import TermsOfServicePage from "pages/TermsOfService.js";
 // import PrivacyPolicyPage from "pages/PrivacyPolicy.js";
-
+import ProfilePage from "pages/Profile.js";
 import ComponentRenderer from "ComponentRenderer.js";
 //import MainLandingPage from "MainLandingPage.js";
 import ThankYouPage from "ThankYouPage.js";
@@ -127,6 +127,10 @@ export default function App() {
           <Route path="/signupCompany" element={<SignupCompanyPage />} />
           <Route path="/AboutUs" element={<AboutUsPage />} />
           <Route path="/ContactUs" element={<ContactUsPage />} />
+          <Route path="/EmployeesList" element={<EmployeesListPage/>} />
+          <Route path="/Profile" element={<ProfilePage/>} />
+
+
 
           <Route path="/" element={<SaaSProductLandingPage />} />
         </Routes>

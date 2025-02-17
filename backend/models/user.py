@@ -15,7 +15,7 @@ printer = pprint.PrettyPrinter()
 
 # Enums
 class Type(Enum):
-    EMPLOYE = "employé"
+    CANDIDAT = "candidat"
     ENTREPRISE = "entreprise"
 
 class Secteur(Enum):
@@ -59,7 +59,7 @@ def add_user(first_name: str, last_name: str, email: str, password: str, métier
         "last_name": last_name,
         "email": email,
         "password": password,  # Consider hashing the password
-        "type": Type.EMPLOYE.value,
+        "type": Type.CANDIDAT.value,
         "métier": métier.value
     }
     result = user_collection.insert_one(user_document)
@@ -108,7 +108,6 @@ def login(email: str, password: str) -> bool:
 
     hashed_password = user["password"].encode('utf-8')  # Convert stored password to bytes
     password = password.encode('utf-8')  # Convert input password to bytes
-
     if bcrypt.checkpw(password, hashed_password):  # Verify password
         print("Login successful.")
         return True  # Authentication successful

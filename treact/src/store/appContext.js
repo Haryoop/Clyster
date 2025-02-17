@@ -19,7 +19,7 @@ const injectContext = (PassedComponent) => {
 
             // Synchronize token and email from sessionStorage on initial load
             const token = sessionStorage.getItem("token");
-            //const email = sessionStorage.getItem("email");
+            const email = sessionStorage.getItem("email");
 
             if (token) {
                 initialState.store.token = token; // Update the store with the token

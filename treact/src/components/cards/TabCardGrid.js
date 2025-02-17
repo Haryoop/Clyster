@@ -59,7 +59,7 @@ const DecoratorBlob2 = styled(SvgDecoratorBlob2)`
 `;
 
 export default ({
-  heading = "Checkout the Menu",
+  heading = "Voici la liste des candidats",
   tabs = {
     Starters: [
       {

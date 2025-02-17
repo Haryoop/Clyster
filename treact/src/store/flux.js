@@ -48,6 +48,7 @@ const getState = ({ getStore, getActions, setStore }) => {
 
                     // Save token to sessionStorage
                     sessionStorage.setItem("token", data.access_token);
+                    sessionStorage.setItem("email", email);
 
                     // Update the store with the new token
                     setStore({ token: data.access_token });
@@ -59,12 +60,10 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Logout action
             logout: () => {
-                // Remove token from sessionStorage
                 sessionStorage.removeItem("token");
+                sessionStorage.removeItem("email");
 
-                // Update the store to remove the token
                 setStore({ token: null });
 
                 console.log("User has been logged out.");

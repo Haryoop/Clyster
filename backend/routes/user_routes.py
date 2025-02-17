@@ -3,7 +3,7 @@ from bson.objectid import ObjectId
 from connection import db
 from datetime import datetime
 from flask_cors import cross_origin
-import bcrypt  # For password hashing
+import bcrypt
 
 user_bp = Blueprint('user_bp', __name__)
 
@@ -23,36 +23,26 @@ def get_all_users():
 @user_bp.route('/users', methods=['POST'])
 def add_user():
     data = request.json
-
-    # Validate required fields
     required_fields = ["first_name", "last_name", "email", "password", "métier"]
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
-
-    # Hash the password
     hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
-
-    # Parse birth_date if provided (optional)
     birth_date = None
     if data.get("birth_date"):
         try:
-            birth_date = datetime.strptime(data["birth_date"], '%Y-%m-%d')  # Parse birth_date to datetime
+            birth_date = datetime.strptime(data["birth_date"], '%Y-%m-%d')
         except ValueError:
             return jsonify({"error": "Invalid date format for birth_date. Use YYYY-MM-DD"}), 400
-
-    # Create new user document
     new_user = {
-        "type": "employe",
+        "type": "candidat",
         "first_name": data["first_name"],
         "last_name": data["last_name"],
         "email": data["email"],
-        "password": hashed_password.decode('utf-8'),  # Store hashed password as a string
+        "password": hashed_password.decode('utf-8'),
         "métier": data["métier"],
-        "birth_date": birth_date  # Optional field
+        "birth_date": birth_date
     }
-
-    # Insert the new user into the database
     result = user_collection.insert_one(new_user)
     return jsonify({"message": "User added", "id": str(result.inserted_id)}), 201
 
@@ -64,18 +54,14 @@ def add_company():
     for field in required_fields:
         if not data.get(field):
             return jsonify({"error": f"Missing required field: {field}"}), 400
-
-    # Hash the password
     hashed_password = bcrypt.hashpw(data["password"].encode('utf-8'), bcrypt.gensalt())
-    # Create new user document
     new_user = {
         "type": "entreprise",
         "company_name": data["company_name"],
         "email": data["email"],
-        "password": hashed_password.decode('utf-8'),  # Store hashed password as a string
+        "password": hashed_password.decode('utf-8'),
         "secteur": data["secteur"]
     }
-    # Insert the new user into the database
     result = user_collection.insert_one(new_user)
     return jsonify({"message": "User added", "id": str(result.inserted_id)}), 201
 # Route: Update a user by ID
@@ -126,7 +112,6 @@ def check_email():
 
     if not email:
         return jsonify({"error": "Email is required"}), 400
-
     # Check if the email already exists in the database
     existing_user = user_collection.find_one({"email": email})
     if existing_user:

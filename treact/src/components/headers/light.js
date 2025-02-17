@@ -1,10 +1,9 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../store/appContext";
 import { motion } from "framer-motion";
 import tw from "twin.macro";
 import styled from "styled-components";
 import { css } from "styled-components/macro"; //eslint-disable-line
-
 import useAnimatedNavToggler from "../../helpers/useAnimatedNavToggler.js";
 
 import logo from "../../images/logo.svg";
@@ -56,9 +55,19 @@ export const DesktopNavLinks = tw.nav`
 
 export default ({ roundedHeaderButton = false, logoLink, links, className, collapseBreakpointClass = "lg" }) => {
   const { store, actions } = useContext(Context);
+  const [userEmail, setUserEmail] = useState(null); // Store email state
+  
+
+  // Retrieve email from sessionStorage
+  useEffect(() => {
+    const email = sessionStorage.getItem("email");
+    setUserEmail(email);
+  }, [store.token]); // Update when token changes
 
   const handleLogout = () => {
-    actions.logout(); // Call the logout action from flux.js
+    actions.logout();
+    sessionStorage.removeItem("email"); // Remove email on logout
+    setUserEmail(null); // Reset state
   };
 
   const defaultLinks = [
@@ -77,9 +86,14 @@ export default ({ roundedHeaderButton = false, logoLink, links, className, colla
           </PrimaryLink>
         </>
       ) : (
-        <NavLink as="button" onClick={handleLogout} tw="lg:ml-12!">
-          Déconnexion
-        </NavLink>
+        <>
+          {userEmail && <NavLink href="/Profile" tw="lg:ml-6!">
+          {userEmail}
+          </NavLink>}
+          <NavLink as="button" onClick={handleLogout} tw="lg:ml-6!">
+            Déconnexion
+          </NavLink>
+        </>
       )}
     </NavLinks>
   ];
