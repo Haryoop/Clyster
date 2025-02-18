@@ -112,9 +112,22 @@ def check_email():
 
     if not email:
         return jsonify({"error": "Email is required"}), 400
-    # Check if the email already exists in the database
     existing_user = user_collection.find_one({"email": email})
     if existing_user:
         return jsonify({"exists": True}), 200
     else:
         return jsonify({"exists": False}), 200
+    
+@user_bp.route('/users/profile', methods=['GET'])
+@cross_origin()
+def get_user_profile():
+    email = request.args.get("email")
+    if not email:
+        return jsonify({"error": "Email parameter is required"}), 400
+
+    user = user_collection.find_one({"email": email})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    user["_id"] = str(user["_id"])  # Convertir ObjectId en string
+    return jsonify(user), 200

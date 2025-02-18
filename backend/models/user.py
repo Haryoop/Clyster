@@ -148,18 +148,3 @@ def delete_user(user_id: str) -> bool:
     except Exception as e:
         print(f"Error occurred: {e}")
         return False
-
-# Example Usage
-if __name__ == "__main__":
-    # Add a user
-    add_user("John", "Doe", "john.doe@example.com", "password123", Metier.DEVELOPPEUR)
-
-    # Add a company
-    add_company("Tech Corp", "tech@example.com", "securepassword", Secteur.INFORMATIQUE)
-
-    # Find all users
-    users = find_all_users()
-    printer.pprint(users)
-
-    # Count users
-    count_all_users()
