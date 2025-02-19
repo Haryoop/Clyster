@@ -82,7 +82,7 @@ import { css } from "styled-components/macro"; //eslint-disable-line
 // import Footer from "components/footers/MiniCenteredFooter.js";
 
 /* Ready Made Pages (from demos folder) */
-// import EventLandingPage from "demos/EventLandingPage.js";
+import EventLandingPage from "demos/EventLandingPage.js";
 // import HotelTravelLandingPage from "demos/HotelTravelLandingPage.js";
 // import AgencyLandingPage from "demos/AgencyLandingPage.js";
 import SaaSProductLandingPage from "demos/SaaSProductLandingPage.js";
@@ -107,6 +107,7 @@ import ComponentRenderer from "ComponentRenderer.js";
 import ThankYouPage from "ThankYouPage.js";
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import UpdateUserPage from "pages/UpdateUser.js";
 
 export default function App() {
   // If you want to disable the animation just use the disabled `prop` like below on your page's component
@@ -129,6 +130,10 @@ export default function App() {
           <Route path="/ContactUs" element={<ContactUsPage />} />
           <Route path="/EmployeesList" element={<EmployeesListPage/>} />
           <Route path="/Profile" element={<ProfilePage/>} />
+          <Route path="/eve" element={<EventLandingPage/>} />
+          <Route path="/UpdateUser" element={<UpdateUserPage/>} />
+
+
 
 
 

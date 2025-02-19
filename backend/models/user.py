@@ -47,18 +47,16 @@ class Company(BaseModel):
 
 # Methods
 def find_all_users() -> List[dict]:
-    """Retrieve all users from the collection."""
     return list(user_collection.find())
 
 def add_user(first_name: str, last_name: str, email: str, password: str, métier: Metier) -> str:
-    """Add a new user to the collection."""
     if not isinstance(métier, Metier):
         raise ValueError("Invalid métier. It must be an instance of Metier enum.")
     user_document = {
         "first_name": first_name,
         "last_name": last_name,
         "email": email,
-        "password": password,  # Consider hashing the password
+        "password": password,
         "type": Type.CANDIDAT.value,
         "métier": métier.value
     }
@@ -67,10 +65,7 @@ def add_user(first_name: str, last_name: str, email: str, password: str, métier
     return str(result.inserted_id)
 
 def add_company(company_name: str, email: str, password: str, secteur: Secteur) -> str:
-    """Add a new company to the collection."""
-    # Hash the password
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-    
     company_document = {
         "company_name": company_name,
         "email": email,
@@ -82,19 +77,7 @@ def add_company(company_name: str, email: str, password: str, secteur: Secteur) 
     result = user_collection.insert_one(company_document)
     print(f"Inserted company with ID: {result.inserted_id}")
     return str(result.inserted_id)
-    """Add a new company to the collection."""
-    if not isinstance(secteur, Secteur):
-        raise ValueError("Invalid secteur. It must be an instance of Secteur enum.")
-    company_document = {
-        "company_name": company_name,
-        "email": email,
-        "password": password,  # Consider hashing the password
-        "type": Type.ENTREPRISE.value,
-        "secteur": secteur.value
-    }
-    result = user_collection.insert_one(company_document)
-    print(f"Inserted company with ID: {result.inserted_id}")
-    return str(result.inserted_id)
+
 
 def login(email: str, password: str) -> bool:
     """Authenticate a user by verifying email and password."""
@@ -114,6 +97,73 @@ def login(email: str, password: str) -> bool:
     else:
         print("Incorrect password.")
         return False  # Authentication failed
+
+def update_user(user_id: str, updates: dict) -> bool:
+    """Update an existing user by their ID."""
+    try:
+        _id = ObjectId(user_id)
+
+        # Vérifier si l'utilisateur existe
+        user = user_collection.find_one({"_id": _id, "type": Type.CANDIDAT.value})
+        if not user:
+            print(f"No user found with ID {user_id}.")
+            return False
+
+        # Vérifier si le métier est valide (s'il est fourni)
+        if "métier" in updates and updates["métier"] not in [m.value for m in Metier]:
+            print("Invalid métier value.")
+            return False
+
+        # Hasher le mot de passe s'il est mis à jour
+        if "password" in updates:
+            updates["password"] = bcrypt.hashpw(updates["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        result = user_collection.update_one({"_id": _id}, {"$set": updates})
+
+        if result.modified_count > 0:
+            print(f"User with ID {user_id} updated successfully.")
+            return True
+        else:
+            print(f"No changes made to user with ID {user_id}.")
+            return False
+
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        return False
+
+
+def update_company(company_id: str, updates: dict) -> bool:
+    """Update an existing company by their ID."""
+    try:
+        _id = ObjectId(company_id)
+        # Vérifier si l'entreprise existe
+        company = user_collection.find_one({"_id": _id, "type": Type.ENTREPRISE.value})
+        if not company:
+            print(f"No company found with ID {company_id}.")
+            return False
+
+        # Vérifier si le secteur est valide (s'il est fourni)
+        if "secteur" in updates and updates["secteur"] not in [s.value for s in Secteur]:
+            print("Invalid secteur value.")
+            return False
+
+        # Hasher le mot de passe s'il est mis à jour
+        if "password" in updates:
+            updates["password"] = bcrypt.hashpw(updates["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+
+        result = user_collection.update_one({"_id": _id}, {"$set": updates})
+
+        if result.modified_count > 0:
+            print(f"Company with ID {company_id} updated successfully.")
+            return True
+        else:
+            print(f"No changes made to company with ID {company_id}.")
+            return False
+
+    except Exception as e:
+        print(f"Error updating company: {e}")
+        return False
+
 
 def get_user_by_first_name(first_name: str) -> Optional[dict]:
     """Retrieve a user by their first name."""
