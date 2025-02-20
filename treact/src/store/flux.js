@@ -1,7 +1,7 @@
 const getState = ({ getStore, getActions, setStore }) => {
     return {
         store: {
-            token: null, // Initialize token in the store
+            token: null,
             message: null,
             demo: [
                 {
@@ -17,12 +17,10 @@ const getState = ({ getStore, getActions, setStore }) => {
             ],
         },
         actions: {
-            // Example function to change color (unchanged)
             exampleFunction: () => {
                 getActions().changeColor(0, "green");
             },
 
-            // Login action
             login: async (email, password) => {
                 const opts = {
                     method: "POST",
@@ -46,11 +44,9 @@ const getState = ({ getStore, getActions, setStore }) => {
                     const data = await resp.json();
                     console.log("Response from the backend:", data);
 
-                    // Save token to sessionStorage
                     sessionStorage.setItem("token", data.access_token);
                     sessionStorage.setItem("email", email);
 
-                    // Update the store with the new token
                     setStore({ token: data.access_token });
 
                     return true;
@@ -69,7 +65,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 console.log("User has been logged out.");
             },
 
-            // Get message from the backend (unchanged)
             getMessage: async () => {
                 try {
                     const resp = await fetch(process.env.BACKEND_URL + "/api/hello");
@@ -81,7 +76,6 @@ const getState = ({ getStore, getActions, setStore }) => {
                 }
             },
 
-            // Change color function (unchanged)
             changeColor: (index, color) => {
                 const store = getStore();
                 const demo = store.demo.map((elm, i) => {

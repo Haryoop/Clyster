@@ -9,7 +9,7 @@ import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { subYears } from "date-fns";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -45,7 +45,7 @@ const IllustrationImage = styled.div`
   ${props => `background-image: url("${props.imageSrc}");`}
   ${tw`m-12 xl:m-16 w-full max-w-lg bg-contain bg-center bg-no-repeat`}
 `;
-// Métier Enum (for dropdown options)
+
 const Metier = {
   DEVELOPPEUR: "développeur",
   RH: "responsable RH",
@@ -75,9 +75,7 @@ export default ({
 
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
-
-  // New state to control which fields are editable (false = read-only)
+  const navigate = useNavigate();
   const [editableFields, setEditableFields] = useState({
     firstName: false,
     lastName: false,
@@ -88,22 +86,18 @@ export default ({
     birthDate: false,
   });
 
-  // Pre-populate the form with logged in user's full info by fetching from the backend.
   useEffect(() => {
-    // Retrieve the email from session storage (try both keys if needed)
     let userEmail = sessionStorage.getItem("email");
     console.log("Prepopulating with email:", userEmail);
     if (userEmail) {
-      // Fetch the user details from your backend.
       fetch(`http://localhost:5000/api/users/profile?email=${encodeURIComponent(userEmail)}`)
         .then((response) => response.json())
         .then((data) => {
-          // Expected fields: first_name, last_name, email, birth_date, métier
           setFormData({
             firstName: data.first_name || "",
             lastName: data.last_name || "",
             email: data.email || "",
-            password: "", // Leave passwords empty for security.
+            password: "",
             confirmPassword: "",
             birthDate: data.birth_date ? new Date(data.birth_date) : null,
             métier: data.métier || "",
@@ -116,8 +110,6 @@ export default ({
     }
   }, []);
 
-  // Function to toggle edit mode for a field.
-  // For password, we also enable the confirmPassword field.
   const toggleEdit = (field) => {
     if (field === "password") {
       setEditableFields((prev) => ({
@@ -133,8 +125,6 @@ export default ({
     }
   };
 
-  // Function to cancel editing for a field.
-  // It will set the field back to non-editable and clear its value.
   const cancelEdit = (field) => {
     if (field === "password") {
       setEditableFields((prev) => ({
@@ -196,7 +186,6 @@ export default ({
 
   const maxDate = subYears(new Date(), 14);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -209,14 +198,12 @@ export default ({
       [name]: true,
     }));
 
-    // Clear the error when the user types something
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
     }));
   };
 
-  // Handle date change for birthDate
   const handleDateChange = (date) => {
     setFormData({ ...formData, birthDate: date });
     setErrors((prevErrors) => ({
@@ -225,7 +212,6 @@ export default ({
     }));
   };
 
-  // Validate all fields in real-time (only if field is editable)
   const validateAllFields = useCallback(() => {
     let newErrors = {};
 
@@ -247,12 +233,10 @@ export default ({
     setErrors(newErrors);
   }, [formData, touchedFields, editableFields]);
 
-  // Run validation whenever formData or touchedFields changes
   useEffect(() => {
     validateAllFields();
   }, [formData, touchedFields, validateAllFields]);
 
-  // Only mark as touched if the field is editable.
   const handleBlur = (e) => {
     const { name } = e.target;
     if (editableFields[name]) {
@@ -273,7 +257,6 @@ export default ({
       }
     });
   
-    // Validate password and confirm password only if they are editable
     if (
       editableFields.password &&
       editableFields.confirmPassword &&
@@ -296,8 +279,6 @@ export default ({
           : null,
       };
   
-      // Assuming userId is stored in sessionStorage or passed as a prop
-      //const userId = sessionStorage.getItem("userId"); // Replace with the actual user ID
       const userId = formData.userId;
       if (!userId) {
         console.error("User ID not found!");
@@ -314,7 +295,7 @@ export default ({
         .then((response) => response.json())
         .then((data) => {
           console.log("User updated successfully!", data);
-          navigate("/profile"); // Navigate to a profile or another page
+          navigate("/profile");
         })
         .catch((error) => {
           console.error("There was an error updating the user!", error);

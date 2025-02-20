@@ -9,7 +9,7 @@ import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { subYears } from "date-fns";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
@@ -51,7 +51,6 @@ const IllustrationImage = styled.div`
   ${tw`m-12 xl:m-16 w-full max-w-lg bg-contain bg-center bg-no-repeat`}
 `;
 
-// Métier Enum (for dropdown options)
 const Metier = {
   DEVELOPPEUR: "développeur",
   RH: "responsable RH",
@@ -76,16 +75,15 @@ export default ({
     password: "",
     confirmPassword: "",
     birthDate: null,
-    métier: "", // Add métier to the form state
+    métier: "",
   });
 
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   const maxDate = subYears(new Date(), 14);
 
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -98,7 +96,6 @@ export default ({
       [name]: true,
     }));
 
-    // Clear the error when the user types something
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
@@ -106,7 +103,6 @@ export default ({
     
   };
 
-  // Handle date change for birthDate
   const handleDateChange = (date) => {
     setFormData({ ...formData, birthDate: date });
     setErrors((prevErrors) => ({
@@ -115,18 +111,15 @@ export default ({
     }));
   };
 
-  // Validate all fields in real-time
   const validateAllFields = useCallback(() => {
     let newErrors = {};
 
-    // Validate required fields
     Object.keys(formData).forEach((key) => {
       if (key !== "confirmPassword" && !formData[key] && touchedFields[key]) {
         newErrors[key] = "Ce champ est nécessaire";
       }
     });
 
-    // Password confirmation validation
     if (formData.password !== formData.confirmPassword && touchedFields.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
     }
@@ -134,7 +127,6 @@ export default ({
     setErrors(newErrors);
   }, [formData, touchedFields]);
 
-  // Run validation whenever formData or touchedFields changes
   useEffect(() => {
     validateAllFields();
   }, [formData, touchedFields, validateAllFields]);
@@ -150,7 +142,6 @@ export default ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate the fields first
     let newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
@@ -158,7 +149,6 @@ export default ({
       }
     });
 
-    // Password confirmation check on submit
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
     }
@@ -166,32 +156,29 @@ export default ({
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      // Prepare user data for submission
       const userData = {
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
-        password: formData.password, // Ensure password is correct
+        password: formData.password,
         métier: formData.métier,
-        birth_date: formData.birthDate ? formData.birthDate.toISOString().split('T')[0] : null, // Convert date to string
+        birth_date: formData.birthDate ? formData.birthDate.toISOString().split('T')[0] : null,
       };
 
-      // Use fetch to send data to the Flask API
       fetch('http://localhost:5000/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(userData), // Send the form data as JSON
+        body: JSON.stringify(userData),
       })
-        .then((response) => response.json()) // Parse the response as JSON
+        .then((response) => response.json())
         .then((data) => {
           console.log('User added successfully!', data);
-          navigate("/login"); // Add this line to redirect to login page
+          navigate("/login");
         })
         .catch((error) => {
           console.error('There was an error adding the user!', error);
-          // Handle the error accordingly (e.g., show an error message)
         });
     }
   };

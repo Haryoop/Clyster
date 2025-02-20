@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import getState from "./flux.js";
 
-// Initialize the context
 export const Context = React.createContext(null);
 
 const injectContext = (PassedComponent) => {
@@ -16,17 +15,15 @@ const injectContext = (PassedComponent) => {
                         store: { ...prevState.store, ...updatedStore },
                     })),
             });
-
-            // Synchronize token and email from sessionStorage on initial load
             const token = sessionStorage.getItem("token");
             const email = sessionStorage.getItem("email");
 
             if (token) {
-                initialState.store.token = token; // Update the store with the token
+                initialState.store.token = token;
             }
 
             if (email) {
-                initialState.store.email = email; // Update the store with the email
+                initialState.store.email = email;
             }
 
             return initialState;
@@ -36,7 +33,7 @@ const injectContext = (PassedComponent) => {
             if (state.actions?.getMessage) {
                 state.actions.getMessage();
             }
-        }, [state.actions]); // ✅ Fix: Added state.actions as a dependency
+        }, [state.actions]);
 
         return (
             <Context.Provider value={state}>

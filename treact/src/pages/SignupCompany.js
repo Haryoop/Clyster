@@ -7,7 +7,7 @@ import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
 import "react-datepicker/dist/react-datepicker.css";
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { useNavigate } from "react-router-dom";
 
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
@@ -73,10 +73,8 @@ export default ({
 
   const [errors, setErrors] = useState({});
   const [touchedFields, setTouchedFields] = useState({});
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
   
-
-  // Handle input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -89,25 +87,21 @@ export default ({
       [name]: true,
     }));
 
-    // Clear the error when the user types something
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
     }));
   };
 
-  // Validate all fields in real-time
   const validateAllFields = useCallback(() => {
     let newErrors = {};
 
-    // Validate required fields
     Object.keys(formData).forEach((key) => {
       if (key !== "confirmPassword" && !formData[key] && touchedFields[key]) {
         newErrors[key] = "Ce champ est nécessaire";
       }
     });
 
-    // Password confirmation validation
     if (formData.password !== formData.confirmPassword && touchedFields.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
     }
@@ -115,7 +109,6 @@ export default ({
     setErrors(newErrors);
   }, [formData, touchedFields]);
 
-  // Run validation whenever formData or touchedFields changes
   useEffect(() => {
     validateAllFields();
   }, [formData, touchedFields, validateAllFields]);
@@ -131,7 +124,6 @@ export default ({
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate the fields first
     let newErrors = {};
     Object.keys(formData).forEach((key) => {
       if (!formData[key]) {
@@ -139,7 +131,6 @@ export default ({
       }
     });
 
-    // Password confirmation check on submit
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Les mots de passe ne sont pas identiques";
     }
