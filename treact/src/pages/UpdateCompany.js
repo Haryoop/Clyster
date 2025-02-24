@@ -6,9 +6,7 @@ import styled from "styled-components";
 import illustration from "images/signup-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as SignUpIcon } from "feather-icons/dist/icons/user-plus.svg";
-import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { subYears } from "date-fns";
 import { useNavigate } from "react-router-dom";
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
@@ -64,7 +62,7 @@ export default ({
   signInUrl = "#",
 }) => {
   const [formData, setFormData] = useState({
-    company_name: "",
+    companyName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -75,7 +73,7 @@ export default ({
   const [touchedFields, setTouchedFields] = useState({});
   const navigate = useNavigate();
   const [editableFields, setEditableFields] = useState({
-    company_name: false,
+    companyName: false,
     email: false,
     password: false,
     confirmPassword: false,
@@ -90,10 +88,10 @@ export default ({
         .then((response) => response.json())
         .then((data) => {
           setFormData({
-            companyName: company_name || "",
+            companyName: data.company_name || "",
             email: data.email || "",
-            password: "",
-            confirmPassword: "",
+            password: data.password || "",
+            confirmPassword: data.confirmPassword || "",
             secteur: data.secteur || "",
             userId: data._id || "",
           });
@@ -193,14 +191,6 @@ export default ({
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: "",
-    }));
-  };
-
-  const handleDateChange = (date) => {
-    setFormData({ ...formData, birthDate: date });
-    setErrors((prevErrors) => ({
-      ...prevErrors,
-      birthDate: "",
     }));
   };
 

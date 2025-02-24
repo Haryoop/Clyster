@@ -13,7 +13,6 @@ Clyster = client.Clyster
 user_collection = Clyster.user
 printer = pprint.PrettyPrinter()
 
-# Enums
 class Type(Enum):
     CANDIDAT = "candidat"
     ENTREPRISE = "entreprise"
@@ -29,7 +28,6 @@ class Metier(Enum):
     MARKETING = "marketing"
     VENTE = "vente"
 
-# Pydantic Models (Optional)
 class User(BaseModel):
     first_name: str
     last_name: str
@@ -85,36 +83,32 @@ def login(email: str, password: str) -> bool:
 
     if user is None:
         print(f"User with email {email} not found in the database.")
-        return False  # User does not exist
+        return False 
+    print(f"User found: {user}") 
 
-    print(f"User found: {user}")  # Debugging line
-
-    hashed_password = user["password"].encode('utf-8')  # Convert stored password to bytes
-    password = password.encode('utf-8')  # Convert input password to bytes
-    if bcrypt.checkpw(password, hashed_password):  # Verify password
+    hashed_password = user["password"].encode('utf-8')
+    password = password.encode('utf-8') 
+    if bcrypt.checkpw(password, hashed_password): 
         print("Login successful.")
-        return True  # Authentication successful
+        return True
     else:
         print("Incorrect password.")
-        return False  # Authentication failed
+        return False
 
 def update_user(user_id: str, updates: dict) -> bool:
     """Update an existing user by their ID."""
     try:
         _id = ObjectId(user_id)
 
-        # Vérifier si l'utilisateur existe
         user = user_collection.find_one({"_id": _id, "type": Type.CANDIDAT.value})
         if not user:
             print(f"No user found with ID {user_id}.")
             return False
 
-        # Vérifier si le métier est valide (s'il est fourni)
         if "métier" in updates and updates["métier"] not in [m.value for m in Metier]:
             print("Invalid métier value.")
             return False
 
-        # Hasher le mot de passe s'il est mis à jour
         if "password" in updates:
             updates["password"] = bcrypt.hashpw(updates["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
@@ -136,18 +130,15 @@ def update_company(company_id: str, updates: dict) -> bool:
     """Update an existing company by their ID."""
     try:
         _id = ObjectId(company_id)
-        # Vérifier si l'entreprise existe
         company = user_collection.find_one({"_id": _id, "type": Type.ENTREPRISE.value})
         if not company:
             print(f"No company found with ID {company_id}.")
             return False
 
-        # Vérifier si le secteur est valide (s'il est fourni)
         if "secteur" in updates and updates["secteur"] not in [s.value for s in Secteur]:
             print("Invalid secteur value.")
             return False
 
-        # Hasher le mot de passe s'il est mis à jour
         if "password" in updates:
             updates["password"] = bcrypt.hashpw(updates["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 

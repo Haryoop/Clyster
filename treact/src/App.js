@@ -105,9 +105,11 @@ import ProfilePage from "pages/Profile.js";
 import ComponentRenderer from "ComponentRenderer.js";
 //import MainLandingPage from "MainLandingPage.js";
 import ThankYouPage from "ThankYouPage.js";
+import UpdateUserPage from "pages/UpdateUser.js";
+import UpdateCompanyPage from "pages/UpdateCompany.js";
+
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import UpdateUserPage from "pages/UpdateUser.js";
 
 export default function App() {
   // If you want to disable the animation just use the disabled `prop` like below on your page's component
@@ -132,6 +134,7 @@ export default function App() {
           <Route path="/Profile" element={<ProfilePage/>} />
           <Route path="/eve" element={<EventLandingPage/>} />
           <Route path="/UpdateUser" element={<UpdateUserPage/>} />
+          <Route path="/UpdateCompany" element={<UpdateCompanyPage/>} />
 
 
 

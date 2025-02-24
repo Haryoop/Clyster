@@ -9,17 +9,14 @@ user_bp = Blueprint('user_bp', __name__)
 
 user_collection = db['user']
 
-# Route: Get all users
 @user_bp.route('/users', methods=['GET'])
 @cross_origin()
 def get_all_users():
     users = list(user_collection.find({}, {"_id": 1, "first_name": 1, "last_name": 1, "email": 1, "métier": 1}))
     for user in users:
-        user["_id"] = str(user["_id"])  # Convert ObjectId to string for JSON
+        user["_id"] = str(user["_id"])
     return jsonify(users), 200
 
-
-# Route: Add a new user
 @user_bp.route('/users', methods=['POST'])
 def add_user():
     data = request.json
@@ -129,5 +126,5 @@ def get_user_profile():
     if not user:
         return jsonify({"error": "User not found"}), 404
 
-    user["_id"] = str(user["_id"])  # Convertir ObjectId en string
+    user["_id"] = str(user["_id"])  
     return jsonify(user), 200
