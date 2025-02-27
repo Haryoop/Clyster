@@ -33,6 +33,7 @@ class User(BaseModel):
     last_name: str
     email: str
     password: str
+    birthdate: date
     type: Type
     métier: Metier
 
@@ -47,7 +48,7 @@ class Company(BaseModel):
 def find_all_users() -> List[dict]:
     return list(user_collection.find())
 
-def add_user(first_name: str, last_name: str, email: str, password: str, métier: Metier) -> str:
+def add_user(first_name: str, last_name: str, email: str, password: str, birthdate: date, métier: Metier) -> str:
     if not isinstance(métier, Metier):
         raise ValueError("Invalid métier. It must be an instance of Metier enum.")
     user_document = {
@@ -55,6 +56,7 @@ def add_user(first_name: str, last_name: str, email: str, password: str, métier
         "last_name": last_name,
         "email": email,
         "password": password,
+        "birthdate": birthdate.isoformat(),
         "type": Type.CANDIDAT.value,
         "métier": métier.value
     }
@@ -108,6 +110,13 @@ def update_user(user_id: str, updates: dict) -> bool:
         if "métier" in updates and updates["métier"] not in [m.value for m in Metier]:
             print("Invalid métier value.")
             return False
+        
+        if "birthdate" in updates:
+            try:
+                updates["birthdate"] = date.fromisoformat(updates["birthdate"]).isoformat()
+            except ValueError:
+                print("Invalid birthdate format. Use YYYY-MM-DD.")
+                return False
 
         if "password" in updates:
             updates["password"] = bcrypt.hashpw(updates["password"].encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
