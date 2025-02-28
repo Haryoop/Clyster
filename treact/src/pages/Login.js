@@ -42,8 +42,8 @@ const IllustrationImage = styled.div`
 const LoginPage = ({
   logoLinkUrl = "/",
   illustrationImageSrc = illustration,
-  headingText = "Sign In To Clyster",
-  submitButtonText = "Sign In",
+  headingText = "Connexion à Clyster",
+  submitButtonText = "Connexion",
   SubmitButtonIcon = LoginIcon,
   forgotPasswordUrl = "#",
   signupUrl = "/signup"
@@ -51,27 +51,26 @@ const LoginPage = ({
   const { store, actions } = useContext(Context);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState(null); // State for handling login errors
-  const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   const HandleClick = async (e) => {
-    e.preventDefault(); // Prevent form submission
-    setError(null); // Reset error state
+    e.preventDefault();
+    setError(null);
 
     try {
       const success = await actions.login(email, password);
       if (success) {
         navigate("/"); // Redirect to home page after successful login
       } else {
-        setError("Invalid email or password. Please try again."); // Set error message
+        setError("Invalid email or password. Please try again.");
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("An error occurred during login. Please try again."); // Set error message
+      setError("An error occurred during login. Please try again.");
     }
   };
 
-  // Redirect if already logged in
   if (store.token && store.token !== "" && store.token !== undefined) {
     navigate("/");
   }
@@ -91,7 +90,7 @@ const LoginPage = ({
                 <Heading>{headingText}</Heading>
                 <FormContainer>
                   <DividerTextContainer>
-                    <DividerText>Sign in with your e-mail</DividerText>
+                    <DividerText>Connectez vous avec votre e-mail</DividerText>
                   </DividerTextContainer>
 
                   {error && ( // Display error message if login fails
@@ -119,15 +118,15 @@ const LoginPage = ({
                     </SubmitButton>
                   </Form>
 
-                  <p tw="mt-6 text-xs text-gray-600 text-center">
+                  {/*<p tw="mt-6 text-xs text-gray-600 text-center">
                     <a href={forgotPasswordUrl} tw="border-b border-gray-500 border-dotted">
                       Forgot Password ?
                     </a>
-                  </p>
+                  </p>*/}
                   <p tw="mt-8 text-sm text-gray-600 text-center">
-                    Dont have an account?{" "}
+                    Vous n'avez pas de compte?{" "}
                     <a href={signupUrl} tw="border-b border-gray-500 border-dotted">
-                      Sign Up
+                      Créer un compte
                     </a>
                   </p>
                 </FormContainer>

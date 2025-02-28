@@ -97,7 +97,7 @@ export default ({
                   </p>
 
                   <p tw="mt-8 text-sm text-gray-600 text-center">
-                    Already have an account?{" "}
+                    Vous avez déjà un compte?{" "}
                     <a href={signInUrl} tw="border-b border-gray-500 border-dotted">
                       Sign In
                     </a>

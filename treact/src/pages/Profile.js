@@ -89,7 +89,10 @@ export default function UserProfile() {
                       <>
                         <p className="text-lg"><strong>Nom :</strong> {user.first_name} {user.last_name}</p>
                         <p className="text-lg"><strong>Email :</strong> {user.email}</p>
-                        <p className="text-lg"><strong>Date de naissance :</strong> {user.birthdate}</p>
+                        <p className="text-lg">
+  <strong>Date de naissance :</strong>{" "}
+  {new Intl.DateTimeFormat("fr-FR", { day: "2-digit", month: "long", year: "numeric" }).format(new Date(user.birthdate))}
+</p>
                         <p className="text-lg"><strong>Métier :</strong> {user.métier}</p>
                       </>
                     ) : (
