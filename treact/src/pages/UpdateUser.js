@@ -56,8 +56,8 @@ const Metier = {
 export default ({
   logoLinkUrl = "/",
   illustrationImageSrc = illustration,
-  headingText = "Créer un compte d'utilisateur chez Clyster",
-  submitButtonText = "Sign Up",
+  headingText = "Modifier une ou plusieurs informations de votre compte",
+  submitButtonText = "Sauvegarder",
   SubmitButtonIcon = SignUpIcon,
   tosUrl = "#",
   privacyPolicyUrl = "#",
@@ -97,9 +97,9 @@ export default ({
             firstName: data.first_name || "",
             lastName: data.last_name || "",
             email: data.email || "",
-            password: data.password || "",
-            confirmPassword: data.confirmPassword || "",
-            birthDate: data.birth_date ? new Date(data.birth_date) : null,
+            password: /*data.password || */"",
+            confirmPassword:/* data.password || */"",
+            birthDate: data.birth_date ? new Date(data.birth_date) : "",
             métier: data.métier || "",
             userId: data._id || "",
           });
@@ -272,12 +272,15 @@ export default ({
         first_name: formData.firstName,
         last_name: formData.lastName,
         email: formData.email,
-        password: formData.password,
+        //password: formData.password,
         métier: formData.métier,
         birth_date: formData.birthDate
           ? formData.birthDate.toISOString().split("T")[0]
           : null,
       };
+      if (editableFields.password && formData.password) {
+        userData.password = formData.password;
+      }
   
       const userId = formData.userId;
       if (!userId) {

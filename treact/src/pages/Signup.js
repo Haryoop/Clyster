@@ -86,20 +86,20 @@ export default ({
                   </SubmitButton>
                   
                   <p tw="mt-6 text-xs text-gray-600 text-center">
-                    I agree to abide by treact's{" "}
+                  J'accepte de respecter les{" "}
                     <a href={tosUrl} tw="border-b border-gray-500 border-dotted">
-                      Terms of Service
+                    Conditions d'utilisation
                     </a>{" "}
-                    and its{" "}
+                    de Clyster et sa{" "}
                     <a href={privacyPolicyUrl} tw="border-b border-gray-500 border-dotted">
-                      Privacy Policy
+                    Politique de confidentialité
                     </a>
                   </p>
 
                   <p tw="mt-8 text-sm text-gray-600 text-center">
                     Vous avez déjà un compte?{" "}
                     <a href={signInUrl} tw="border-b border-gray-500 border-dotted">
-                      Sign In
+                      Connexion
                     </a>
                   </p>
                 </Form>

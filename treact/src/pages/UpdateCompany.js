@@ -255,14 +255,17 @@ export default ({
         email: formData.email,
         password: formData.password,
         secteur: formData.secteur,
+        birth_date: formData.birthDate ? formData.birthDate.toISOString().split("T")[0] : "", 
       };
-  
+
+      /*if (editableFields.password && formData.password) {
+        userData.password = formData.password;
+      }*/
       const userId = formData.userId;
       if (!userId) {
         console.error("User ID not found!");
         return;
       }
-  // change to /companies
       fetch(`http://localhost:5000/api/users/${userId}`, {
         method: "PUT",
         headers: {
