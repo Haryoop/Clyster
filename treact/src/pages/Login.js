@@ -8,7 +8,7 @@ import illustration from "images/login-illustration.svg";
 import logo from "images/logo.svg";
 import { ReactComponent as LoginIcon } from "feather-icons/dist/icons/log-in.svg";
 import { Context } from "store/appContext";
-import { useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
+import { useNavigate } from "react-router-dom";
 
 const Container = tw(ContainerBase)`min-h-screen bg-primary-900 text-white font-medium flex justify-center -m-8`;
 const Content = tw.div`max-w-screen-xl m-0 sm:mx-20 sm:my-16 bg-white text-gray-900 shadow sm:rounded-lg flex justify-center flex-1`;
@@ -61,7 +61,7 @@ const LoginPage = ({
     try {
       const success = await actions.login(email, password);
       if (success) {
-        navigate("/"); // Redirect to home page after successful login
+        navigate("/");
       } else {
         setError("Invalid email or password. Please try again.");
       }
@@ -93,7 +93,7 @@ const LoginPage = ({
                     <DividerText>Connectez vous avec votre e-mail</DividerText>
                   </DividerTextContainer>
 
-                  {error && ( // Display error message if login fails
+                  {error && (
                     <div tw="text-red-500 text-center mb-4">
                       {error}
                     </div>

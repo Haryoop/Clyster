@@ -76,7 +76,7 @@ export default function UserProfile() {
       <Container>
         <ContentWithPaddingXl>
           <HeadingRow>
-            <Heading>Votre profil</Heading>
+            <Heading>Votre test:</Heading>
           </HeadingRow>
           <Text>
             <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
