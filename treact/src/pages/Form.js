@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { css } from "styled-components/macro"; //eslint-disable-line
 import styled from "styled-components";
 import { SectionHeading } from "components/misc/Headings";
 import tw from "twin.macro";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts";
-import { PrimaryButton } from "components/misc/Buttons"; // Assuming you have a button component
+import { PrimaryButton } from "components/misc/Buttons"; 
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import Header from "components/headers/light.js";
 import Footer from "components/footers/FiveColumnWithInputForm.js";
-import { useNavigate } from "react-router-dom"; // Use useNavigate instead of useHistory
+import { useNavigate } from "react-router-dom";
 
 const HeadingRow = tw.div`flex`;
 const Heading = tw(SectionHeading)`text-gray-900 mb-10`;
