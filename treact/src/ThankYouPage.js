@@ -2,7 +2,6 @@ import React from "react";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import { Container, Content2Xl } from "components/misc/Layouts";
 import tw from "twin.macro";
-//import { css } from "styled-components/macro"; 
 import GitHubButton from "react-github-btn";
 
 import { LogoLink } from "components/headers/light.js";
@@ -11,7 +10,6 @@ import { SectionDescription as DescriptionBase } from "components/misc/Typograph
 
 import logo from "images/logo.svg";
 
-/* Hero */
 const Row = tw.div`flex`;
 const NavRow = tw(Row)`flex flex-col lg:flex-row items-center justify-between`;
 const NavLink = tw.a`mt-4 lg:mt-0 transition duration-300 font-medium pb-1 border-b-2 lg:mr-12 last:mr-0 text-gray-700 border-gray-400 hocus:border-gray-700 `;
