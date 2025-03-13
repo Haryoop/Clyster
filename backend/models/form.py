@@ -1,6 +1,6 @@
 import pprint
 import os
-#import openai
+#import openai #need anoither ai
 from connection import connection_string
 from pymongo import MongoClient
 from pydantic import BaseModel
