@@ -1,13 +1,10 @@
 import pprint
 import os
-#
 from connection import connection_string
 from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import List, Optional
 from bson.objectid import ObjectId
-
-
 
 client = MongoClient(connection_string)
 Clyster = client.Clyster
@@ -23,7 +20,6 @@ class Form(BaseModel):
     reponse3: str
 
 def add_form(question1: str, reponse1: str, question2: str, reponse2: str, question3: str, reponse3: str) -> str:
-
     form_document = {
         "question1": question1,
         "reponse1": reponse1,
@@ -35,4 +31,16 @@ def add_form(question1: str, reponse1: str, question2: str, reponse2: str, quest
     result = form_collection.insert_one(form_document)
     print(f"Inserted form with ID: {result.inserted_id}")
     return str(result.inserted_id)
+
+#def generate_questions(job: str) -> list:
+#   return
+from google import genai
+
+def sayHi():
+    client = genai.Client(api_key="AIzaSyAHNMELaRN1Iz7IYHOwU_s7rl_6ofgssss")
+    response = client.models.generate_content(
+        model="gemini-2.0-flash", contents="give me an interview question for a plumber"
+    )
+    print(response.text)
+
 
