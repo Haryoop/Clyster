@@ -37,7 +37,7 @@ def add_form(question1: str, reponse1: str, question2: str, reponse2: str, quest
 from google import genai
 
 def sayHi():
-    client = genai.Client(api_key="AIzaSyAHNMELaRN1Iz7IYHOwU_s7rl_6ofgssss")
+    client = genai.Client(api_key="")
     response = client.models.generate_content(
         model="gemini-2.0-flash", contents="give me an interview question for a plumber"
     )
