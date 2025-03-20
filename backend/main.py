@@ -3,6 +3,7 @@ import os
 from flask_jwt_extended import JWTManager, get_jwt_identity, jwt_required, create_access_token
 from authentication.routes import api
 from flask import Flask
+
 from flask_cors import CORS
 import models.form as form
 from routes.user_routes import user_bp
