@@ -5,6 +5,10 @@ from pymongo import MongoClient
 from pydantic import BaseModel
 from typing import List, Optional
 from bson.objectid import ObjectId
+from dotenv import load_dotenv, find_dotenv
+
+load_dotenv(find_dotenv())
+api=os.environ.get("GEMINI_API_KEY")
 
 client = MongoClient(connection_string)
 Clyster = client.Clyster
@@ -36,11 +40,20 @@ def add_form(question1: str, reponse1: str, question2: str, reponse2: str, quest
 #   return
 from google import genai
 
-def sayHi():
-    client = genai.Client(api_key="")
+def sayHi(metier: str):
+    client = genai.Client(api_key=api)
     response = client.models.generate_content(
-        model="gemini-2.0-flash", contents="give me an interview question for a plumber"
+        model="gemini-2.0-flash",
+        contents=f"Génère 5 questions d'entretien directes pour un(e) {metier}."
     )
-    print(response.text)
+    questions = response.text.split('\n')
+    questions = [q.strip() for q in questions if q.strip()]  # Supprime les lignes vides
+    questions = questions[1:6]  # Ne garde que les 5 premières questions
+    # si la premiere question est vide, je la supprime
+    if questions[0] == '':
+        questions = questions[1:]
+    for i, question in enumerate(questions):
+        print(question)
+    return questions
 
 
