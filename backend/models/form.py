@@ -47,9 +47,8 @@ def sayHi(metier: str):
         contents=f"Génère 5 questions d'entretien directes pour un(e) {metier}."
     )
     questions = response.text.split('\n')
-    questions = [q.strip() for q in questions if q.strip()]  # Supprime les lignes vides
-    questions = questions[1:6]  # Ne garde que les 5 premières questions
-    # si la premiere question est vide, je la supprime
+    questions = [q.strip() for q in questions if q.strip()]
+    questions = questions[1:6]
     if questions[0] == '':
         questions = questions[1:]
     for i, question in enumerate(questions):
