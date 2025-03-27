@@ -17,7 +17,7 @@ CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(api, url_prefix='/api')
-form.sayHi("plombier")
+form.generate_questions("plombier")
 
 
 @app.route('/')

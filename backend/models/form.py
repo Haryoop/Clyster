@@ -40,7 +40,7 @@ def add_form(question1: str, reponse1: str, question2: str, reponse2: str, quest
 #   return
 from google import genai
 
-def sayHi(metier: str):
+def generate_questions(metier: str):
     client = genai.Client(api_key=api)
     response = client.models.generate_content(
         model="gemini-2.0-flash",
@@ -53,6 +53,7 @@ def sayHi(metier: str):
         questions = questions[1:]
     for i, question in enumerate(questions):
         print(question)
+    #xreate
     return questions
 
 
