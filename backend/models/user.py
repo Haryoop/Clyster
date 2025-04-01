@@ -36,6 +36,7 @@ class User(BaseModel):
     birthdate: date
     type: Type
     métier: Metier
+    IsTested: bool = False
 
 class Company(BaseModel):
     company_name: str
@@ -58,7 +59,8 @@ def add_user(first_name: str, last_name: str, email: str, password: str, birthda
         "password": password,
         "birthdate": birthdate.isoformat(),
         "type": Type.CANDIDAT.value,
-        "métier": métier.value
+        "métier": métier.value,
+        "IsTested": False
     }
     result = user_collection.insert_one(user_document)
     print(f"Inserted user with ID: {result.inserted_id}")
@@ -128,6 +130,34 @@ def update_user(user_id: str, updates: dict) -> bool:
             return True
         else:
             print(f"No changes made to user with ID {user_id}.")
+            return False
+
+    except Exception as e:
+        print(f"Error updating user: {e}")
+        return False
+
+#test this func
+def mark_user_as_tested(user_id: str) -> bool:
+    """Set IsTested to True for a given user ID."""
+    try:
+        _id = ObjectId(user_id)
+
+        user = user_collection.find_one({"_id": _id, "type": Type.CANDIDAT.value})
+        if not user:
+            print(f"No user found with ID {user_id}.")
+            return False
+
+        if user.get("IsTested") is True:
+            print(f"User with ID {user_id} is already tested.")
+            return False
+
+        result = user_collection.update_one({"_id": _id}, {"$set": {"IsTested": True}})
+
+        if result.modified_count > 0:
+            print(f"User with ID {user_id} marked as tested.")
+            return True
+        else:
+            print(f"Failed to update user with ID {user_id}.")
             return False
 
     except Exception as e:

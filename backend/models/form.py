@@ -53,7 +53,7 @@ def generate_questions(metier: str):
         questions = questions[1:]
     for i, question in enumerate(questions):
         print(question)
-    #xreate
+    #create
     return questions
 
 
