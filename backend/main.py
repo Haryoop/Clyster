@@ -22,6 +22,7 @@ form.generate_questions("plombier")
 
 
 
+
 @app.route('/')
 def home():
     return {"message": "Welcome to the Flask MongoDB API!"}
