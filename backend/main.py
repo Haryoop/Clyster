@@ -14,6 +14,9 @@ app = Flask(__name__)
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET")
 jwt = JWTManager(app)
 
+
+
+
 CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/api')
