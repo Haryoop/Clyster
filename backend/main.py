@@ -7,31 +7,17 @@ from flask_cors import CORS
 import models.form as form
 from routes.user_routes import user_bp
 
-
-
-
-
-
 app = Flask(__name__)
-
-
 
 
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET")
 jwt = JWTManager(app)
-
-
-
 
 CORS(app)
 
 app.register_blueprint(user_bp, url_prefix='/api')
 app.register_blueprint(api, url_prefix='/api')
 form.generate_questions("plombier")
-
-
-
-
 
 
 @app.route('/')
