@@ -5,23 +5,23 @@ import tw from "twin.macro";
 import { SectionHeading, Subheading as SubheadingBase } from "components/misc/Headings.js";
 import { SectionDescription } from "components/misc/Typography.js";
 import { Container, ContentWithPaddingXl } from "components/misc/Layouts.js";
-import { ReactComponent as ArrowRightIcon } from "images/arrow-right-icon.svg";
-import SupportIconImage from "images/support-icon.svg";
-import ShieldIconImage from "images/shield-icon.svg";
-import CustomizeIconImage from "images/customize-icon.svg";
+//import { ReactComponent as ArrowRightIcon } from "images/arrow-right-icon.svg";
+//import SupportIconImage from "images/support-icon.svg";
+//import ShieldIconImage from "images/shield-icon.svg";
+//import CustomizeIconImage from "images/customize-icon.svg";
 import { ReactComponent as SvgDecoratorBlob3 } from "images/svg-decorator-blob-3.svg";
 
 const Heading = tw(SectionHeading)``;
 const Subheading = tw(SubheadingBase)`text-center mb-3`;
 const Description = tw(SectionDescription)`text-center mx-auto`;
-const ThreeColumnContainer = styled.div`
+/*const ThreeColumnContainer = styled.div`
   ${tw`mt-10 flex flex-col items-center lg:items-stretch lg:flex-row flex-wrap lg:justify-center max-w-screen-lg mx-auto`}
-`;
-const Column = styled.div`
+`;*/
+/*const Column = styled.div`
   ${tw`lg:w-1/3 max-w-xs`}
-`;
+`;*/
 
-const Card = styled.a`
+/*const Card = styled.a`
   ${tw`flex flex-col items-center text-center h-full mx-4 px-4 py-8 rounded transition-transform duration-300 hover:cursor-pointer transform hover:scale-105 `}
   .imageContainer {
     ${tw`text-center rounded-full p-4 bg-gray-100`}
@@ -44,14 +44,14 @@ const Card = styled.a`
       ${tw`ml-2 w-4`}
     }
   }
-`;
+`;*/
 
 const DecoratorBlob = styled(SvgDecoratorBlob3)`
   ${tw`pointer-events-none absolute right-0 bottom-0 w-64 opacity-25 transform translate-x-32 translate-y-40`}
 `;
 
 export default ({
-  cards = [
+  /*cards = [
     {
       imageSrc: ShieldIconImage,
       title: "Secure",
@@ -70,7 +70,7 @@ export default ({
       description: "Lorem ipsum donor amet siti ceali placeholder text",
       url: "https://reddit.com"
     }
-  ],
+  ],*/
   linkText = "Learn More",
   heading = "",
   subheading = "",
@@ -91,7 +91,7 @@ export default ({
         {subheading && <Subheading>{subheading}</Subheading>}
         {heading && <Heading>{heading}</Heading>}
         {description && <Description>{description}</Description>}
-        <ThreeColumnContainer>
+        {/* <ThreeColumnContainer>
           {cards.map((card, i) => (
             <Column key={i}>
               <Card href={card.url}>
@@ -109,7 +109,7 @@ export default ({
               </Card>
             </Column>
           ))}
-        </ThreeColumnContainer>
+        </ThreeColumnContainer> */}
       </ContentWithPaddingXl>
       <DecoratorBlob />
     </Container>

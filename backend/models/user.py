@@ -49,6 +49,16 @@ class Company(BaseModel):
 def find_all_users() -> List[dict]:
     return list(user_collection.find())
 
+def get_untested_users() -> List[dict]:
+    """Retrieve all users who haven't been tested yet (IsTested = False)."""
+    query = {
+        "type": Type.CANDIDAT.value,
+        "IsTested": False
+    }
+    users = list(user_collection.find(query))
+    printer.pprint(users)
+    return users
+
 def add_user(first_name: str, last_name: str, email: str, password: str, birthdate: date, métier: Metier) -> str:
     if not isinstance(métier, Metier):
         raise ValueError("Invalid métier. It must be an instance of Metier enum.")

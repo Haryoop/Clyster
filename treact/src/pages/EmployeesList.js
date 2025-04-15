@@ -1,37 +1,134 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import tw from "twin.macro";
 import AnimationRevealPage from "helpers/AnimationRevealPage.js";
 import Features from "components/features/ThreeColSimple.js";
-import MainFeature2 from "components/features/TwoColSingleFeatureWithStats2.js";
-import Testimonial from "components/testimonials/ThreeColumnWithProfileImage.js";
-import DownloadApp from "components/cta/DownloadApp.js";
 import Footer from "components/footers/FiveColumnWithInputForm.js";
 import Header from "components/headers/light.js";
 
-const employeesData = [
-  { id: 1, name: "John Doe", role: "Ingénieur Logiciel", email: "john@example.com" },
-  { id: 2, name: "Jane Smith", role: "Chef de Projet", email: "jane@example.com" },
-  { id: 3, name: "Michael Brown", role: "Designer UX", email: "michael@example.com" },
-];
+const frenchLocalization = {
+  pagination: {
+    rowsPerPageText: 'Lignes par page:',
+    rangeSeparatorText: 'sur',
+    selectAllRowsItem: true,
+    selectAllRowsItemText: 'Tous',
+    noRowsPerPage: false,
+  },
+  noData: {
+    text: 'Aucune donnée disponible'
+  }
+};
 
 export default function EmployeesList() {
   const [search, setSearch] = useState("");
-  const [filteredEmployees, setFilteredEmployees] = useState(employeesData);
+  const [employees, setEmployees] = useState([]);
+  const [filteredEmployees, setFilteredEmployees] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch untested users from the backend
+  useEffect(() => {
+    const fetchUntestedUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/api/users/untested');
+        if (!response.ok) {
+          throw new Error('Failed to fetch users');
+        }
+        const data = await response.json();
+        setEmployees(data);
+        setFilteredEmployees(data);
+        setLoading(false);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchUntestedUsers();
+  }, []);
+
+  const handleSendTest = (userId) => {
+    // This function will be called when the button is clicked
+    console.log(`Test to be sent to user with ID: ${userId}`);
+    // Add your test sending logic here later
+    alert(`Test envoyé au candidat avec ID: ${userId}`);
+  };
 
   const columns = [
-    { name: "ID", selector: row => row.id, sortable: true },
-    { name: "Nom", selector: row => row.name, sortable: true },
-    { name: "Rôle", selector: row => row.role, sortable: true },
-    { name: "Email", selector: row => row.email, sortable: true },
+    { 
+      name: "Nom", 
+      selector: row => `${row.first_name} ${row.last_name}`, 
+      sortable: true 
+    },
+    { 
+      name: "Rôle", 
+      selector: row => row.métier, 
+      sortable: true 
+    },
+    { 
+      name: "Email", 
+      selector: row => row.email, 
+      sortable: true 
+    },
+    { 
+      name: "Date de naissance", 
+      cell: row => {
+        if (!row.birth_date) return 'N/A';
+        try {
+          const date = new Date(row.birth_date);
+          const day = String(date.getDate()).padStart(2, '0');
+          const month = String(date.getMonth() + 1).padStart(2, '0');
+          const year = date.getFullYear();
+          return `${day}/${month}/${year}`;
+        } catch (e) {
+          console.error('Invalid date format:', row.birth_date);
+          return 'Date invalide';
+        }
+      },
+      sortable: true,
+      sortFunction: (a, b) => {
+        const dateA = a.birth_date ? new Date(a.birth_date) : null;
+        const dateB = b.birth_date ? new Date(b.birth_date) : null;
+        return (dateA || 0) - (dateB || 0);
+      }
+    },
+    {
+      name: "Actions",
+      cell: row => (
+        <button
+          onClick={() => handleSendTest(row._id)}
+          style={{
+            padding: '0.5rem 1rem',
+            backgroundColor: '#3b82f6',
+            color: 'white',
+            borderRadius: '0.375rem',
+            border: 'none',
+            cursor: 'pointer',
+            fontWeight: '500',
+            fontSize: '0.875rem',
+            lineHeight: '1.25rem',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            minWidth: '120px',
+            transition: 'background-color 0.2s ease',
+          }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'} // blue-600
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'} // blue-500
+        >
+          Envoyer test
+        </button>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    }
   ];
 
   const handleSearch = (event) => {
     const searchTerm = event.target.value.toLowerCase();
     setSearch(searchTerm);
-    const filtered = employeesData.filter(employee =>
-      employee.name.toLowerCase().includes(searchTerm) ||
-      employee.role.toLowerCase().includes(searchTerm) ||
+    const filtered = employees.filter(employee =>
+      `${employee.first_name} ${employee.last_name}`.toLowerCase().includes(searchTerm) ||
+      employee.métier.toLowerCase().includes(searchTerm) ||
       employee.email.toLowerCase().includes(searchTerm)
     );
     setFilteredEmployees(filtered);
@@ -40,33 +137,58 @@ export default function EmployeesList() {
   return (
     <AnimationRevealPage>
       <Header />
+      <Features
+        heading={<><span tw="bg-primary-500 text-gray-100 px-4 transform -skew-x-12 inline-block">Liste des candidats à tester</span></>}
+      />
       <div tw="p-8 flex justify-center">
-        <div tw="w-full max-w-lg mx-auto">
-          <h2 tw="text-2xl font-semibold mb-4">Liste des Employés</h2>
+        <div tw="w-full max-w-6xl mx-auto"> {/* Increased max-width to accommodate extra column */}
+          <h2 tw="text-2xl font-semibold mb-4">Liste des Candidats Non Testés</h2>
           
-          <div tw="w-full overflow-x-auto">
-            <DataTable
-              columns={columns}
-              data={filteredEmployees}
-              pagination
-              highlightOnHover
+          <div tw="mb-4 flex justify-between items-center">
+            <input
+              type="text"
+              placeholder="Rechercher un candidat..."
+              value={search}
+              onChange={handleSearch}
+              tw="p-2 w-64"
+              style={{ border: '2px solid #6b7280', borderRadius: '0.5rem' }}
             />
+            <span tw="text-gray-600">
+              {filteredEmployees.length} candidat(s) trouvé(s)
+            </span>
           </div>
-          <input
-            type="text"
-            placeholder="Rechercher un employé..."
-            value={search}
-            onChange={handleSearch}
-            tw="mb-4 p-2 border rounded w-full"
-          />
+
+          {loading ? (
+            <div tw="text-center py-8">Chargement en cours...</div>
+          ) : (
+            <div tw="w-full overflow-x-auto border rounded-lg">
+              <DataTable
+                columns={columns}
+                data={filteredEmployees}
+                pagination
+                highlightOnHover
+                striped
+                noDataComponent={
+                  <div tw="py-8 text-center text-gray-500">
+                    Aucun candidat non testé trouvé
+                  </div>
+                }
+                customStyles={{
+                  headCells: {
+                    style: {
+                      fontWeight: 'bold',
+                      fontSize: '1rem',
+                    },
+                  },
+                }}
+                paginationComponentOptions={frenchLocalization.pagination}
+                paginationPerPage={10}
+                paginationRowsPerPageOptions={[5, 10, 15, 20]}
+              />
+            </div>
+          )}
         </div>
       </div>
-      <Features
-        heading={<><span tw="bg-primary-500 text-gray-100 px-4 transform -skew-x-12 inline-block">Service impréssionnant.</span></>}
-      />
-      <MainFeature2 heading={<><span tw="bg-primary-500 text-gray-100 px-4 transform -skew-x-12 inline-block">Pourquoi nous choisir ?</span></>} />
-      <Testimonial heading={<><span tw="bg-primary-500 text-gray-100 px-4 transform -skew-x-12 inline-block">Nos clients nous adorent.</span></>} />
-      <DownloadApp text={<>Les personnes autour de vous commandent de délicieux repas avec l'<span tw="bg-gray-100 text-primary-500 px-4 transform -skew-x-12 inline-block">application Treact.</span></>} />
       <Footer />
     </AnimationRevealPage>
   );

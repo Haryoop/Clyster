@@ -38,7 +38,8 @@ def add_user():
         "email": data["email"],
         "password": hashed_password.decode('utf-8'),
         "métier": data["métier"],
-        "birth_date": birth_date
+        "birth_date": birth_date,
+        "IsTested": False
     }
     result = user_collection.insert_one(new_user)
     return jsonify({"message": "User added", "id": str(result.inserted_id)}), 201
@@ -128,3 +129,31 @@ def get_user_profile():
 
     user["_id"] = str(user["_id"])  
     return jsonify(user), 200
+
+@user_bp.route('/users/untested', methods=['GET'])
+@cross_origin()
+def get_untested_users():
+    try:
+        # Find all candidate users who haven't been tested yet
+        users = list(user_collection.find({
+            "type": "candidat",
+            "IsTested": False
+        }, {
+            "_id": 1,
+            "first_name": 1,
+            "last_name": 1,
+            "email": 1,
+            "métier": 1,
+            "birth_date": 1
+        }))
+        
+        # Convert ObjectId to string and format birth_date if it exists
+        for user in users:
+            user["_id"] = str(user["_id"])
+            if user.get("birth_date"):
+                user["birth_date"] = user["birth_date"].isoformat()
+        
+        return jsonify(users), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
