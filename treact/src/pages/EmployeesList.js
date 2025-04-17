@@ -46,9 +46,7 @@ export default function EmployeesList() {
   }, []);
 
   const handleSendTest = (userId) => {
-    // This function will be called when the button is clicked
     console.log(`Test to be sent to user with ID: ${userId}`);
-    // Add your test sending logic here later
     alert(`Test envoyé au candidat avec ID: ${userId}`);
   };
 
