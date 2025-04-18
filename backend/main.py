@@ -10,6 +10,8 @@ from routes.user_routes import user_bp
 app = Flask(__name__)
 
 
+
+
 app.config["JWT_SECRET_KEY"] = os.environ.get("JWT_SECRET")
 jwt = JWTManager(app)
 
