@@ -7,7 +7,7 @@ import Header from "components/headers/light.js";
 
 const frenchLocalization = {
   pagination: {
-    rowsPerPageText: 'Lignes par page:',
+    rowsPerPageText: 'Candidats par page:',
     rangeSeparatorText: 'sur',
     selectAllRowsItem: true,
     selectAllRowsItemText: 'Tous',
@@ -23,6 +23,7 @@ export default function EmployeesList() {
   const [employees, setEmployees] = useState([]);
   const [filteredEmployees, setFilteredEmployees] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [sendingTest, setSendingTest] = useState(false);
 
   // Fetch untested users from the backend
   useEffect(() => {
@@ -45,9 +46,39 @@ export default function EmployeesList() {
     fetchUntestedUsers();
   }, []);
 
-  const handleSendTest = (userId) => {
-    console.log(`Test to be sent to user with ID: ${userId}`);
-    alert(`Test envoyé au candidat avec ID: ${userId}`);
+  const handleSendTest = async (userId) => {
+    setSendingTest(true);
+    try {
+      // Call the backend to generate questions and create form
+      const response = await fetch(`http://localhost:5000/api/forms/generate/${userId}`, {
+        method: 'POST'
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate test');
+      }
+
+      const result = await response.json();
+      
+      // Update the UI to show the user has been tested
+      setEmployees(prevEmployees => 
+        prevEmployees.map(employee => 
+          employee._id === userId ? { ...employee, IsTested: true } : employee
+        )
+      );
+      setFilteredEmployees(prev => 
+        prev.map(employee => 
+          employee._id === userId ? { ...employee, IsTested: true } : employee
+        )
+      );
+
+      alert(`Test généré avec succès pour le candidat. ID du formulaire: ${result.form_id}`);
+    } catch (error) {
+      console.error('Error generating test:', error);
+      alert('Erreur lors de la génération du test');
+    } finally {
+      setSendingTest(false);
+    }
   };
 
   const columns = [
@@ -93,13 +124,14 @@ export default function EmployeesList() {
       cell: row => (
         <button
           onClick={() => handleSendTest(row._id)}
+          disabled={sendingTest || row.IsTested}
           style={{
             padding: '0.5rem 1rem',
-            backgroundColor: '#3b82f6',
+            backgroundColor: row.IsTested ? '#6b7280' : '#3b82f6', // gray if tested, blue otherwise
             color: 'white',
             borderRadius: '0.375rem',
             border: 'none',
-            cursor: 'pointer',
+            cursor: row.IsTested ? 'not-allowed' : 'pointer',
             fontWeight: '500',
             fontSize: '0.875rem',
             lineHeight: '1.25rem',
@@ -109,10 +141,10 @@ export default function EmployeesList() {
             minWidth: '120px',
             transition: 'background-color 0.2s ease',
           }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#2563eb'} // blue-600
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = '#3b82f6'} // blue-500
+          onMouseOver={(e) => !row.IsTested && (e.currentTarget.style.backgroundColor = '#2563eb')} // blue-600
+          onMouseOut={(e) => !row.IsTested && (e.currentTarget.style.backgroundColor = '#3b82f6')} // blue-500
         >
-          Envoyer test
+          {sendingTest ? 'Envoi en cours...' : row.IsTested ? 'Test envoyé' : 'Envoyer test'}
         </button>
       ),
       ignoreRowClick: true,
@@ -139,7 +171,7 @@ export default function EmployeesList() {
         heading={<><span tw="bg-primary-500 text-gray-100 px-4 transform -skew-x-12 inline-block">Liste des candidats à tester</span></>}
       />
       <div tw="p-8 flex justify-center">
-        <div tw="w-full max-w-6xl mx-auto"> {/* Increased max-width to accommodate extra column */}
+        <div tw="w-full max-w-6xl mx-auto">
           <h2 tw="text-2xl font-semibold mb-4">Liste des Candidats Non Testés</h2>
           
           <div tw="mb-4 flex justify-between items-center">

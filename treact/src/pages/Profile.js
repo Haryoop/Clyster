@@ -111,6 +111,40 @@ export default function UserProfile() {
               )}
             </div>
           </Text>
+          <HeadingRow>
+            <Heading>Vos tests</Heading>
+          </HeadingRow>
+          <Text>
+            <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-8">
+              {user ? (
+                <div className="bg-white shadow-xl rounded-lg p-8 w-full max-w-3xl">
+                  <div className="flex flex-col items-start space-y-4">
+                    
+                    {user.type === "candidat" ? (
+                      <>
+                        <p className="text-lg"><strong>Vous avez un test</strong></p>
+                        <PrimaryButton onClick={handleUpdateProfile} className="mt-6">
+                      Passer le test
+                    </PrimaryButton>
+                      </>
+
+                      
+                    ) : (
+                      <>
+                        
+                        <PrimaryButton onClick={handleUpdateProfile} className="mt-6">
+                      Choisir des candidats à tester
+                    </PrimaryButton>
+                      </>
+                    )}
+                    
+                  </div>
+                </div>
+              ) : (
+                <p className="text-xl text-gray-600">Chargement du profil...</p>
+              )}
+            </div>
+          </Text>
         </ContentWithPaddingXl>
       </Container>
       <Footer />
