@@ -8,6 +8,8 @@ import models.form as form
 from routes.user_routes import user_bp
 from routes.form_routes import form_bp
 
+
+
 app = Flask(__name__)
 
 
