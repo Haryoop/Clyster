@@ -10,17 +10,6 @@ from routes.form_routes import form_bp
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 app = Flask(__name__)
 
 
@@ -34,7 +23,6 @@ app.register_blueprint(form_bp, url_prefix='/api')
 app.register_blueprint(api, url_prefix='/api')
 
 #form.generate_questions("67fe9dfa4d41763433272fd7")
-
 
 @app.route('/')
 def home():

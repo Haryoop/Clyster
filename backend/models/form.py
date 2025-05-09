@@ -121,3 +121,21 @@ def generate_questions(user_id: str):
     except Exception as e:
         print(f"Error generating questions: {e}")
         return None
+    
+def check_form_exists(user_id: str):
+    """Check if a form exists for the given user ID.
+    
+    Args:
+        user_id: The ID of the user to check
+        
+    Returns:
+        dict: {'exists': bool} indicating if form exists
+    """
+    try:
+        _id = ObjectId(user_id)
+        # Changed from user_id to candidat_id to match your database schema
+        form = form_collection.find_one({"candidat_id": _id})
+        return {"exists": form is not None}
+    except Exception as e:
+        print(f"Error checking form existence: {e}")
+        return {"exists": False}
