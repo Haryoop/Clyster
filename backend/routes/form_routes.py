@@ -37,7 +37,7 @@ def generate_form(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@form_bp.route('/api/forms/<form_id>', methods=['GET'])
+@form_bp.route('/forms/<form_id>', methods=['GET'])
 def get_form(form_id):
     try:
         form = form_collection.find_one({"_id": ObjectId(form_id)})
@@ -77,27 +77,19 @@ def get_forms_by_user(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-@form_bp.route('/api/forms/<form_id>/responses', methods=['PUT'])
+@form_bp.route('/forms/<form_id>/responses', methods=['PUT'])
 def save_responses(form_id):
     try:
         data = request.get_json()
         
-        required_fields = [
-            "reponse1", "reponse2", "reponse3", 
-            "reponse4", "reponse5"
-        ]
-        
-        if not all(field in data for field in required_fields):
-            return jsonify({"error": "Missing required fields"}), 400
-        
         update_result = form_collection.update_one(
             {"_id": ObjectId(form_id)},
             {"$set": {
-                "reponse1": data["reponse1"],
-                "reponse2": data["reponse2"],
-                "reponse3": data["reponse3"],
-                "reponse4": data["reponse4"],
-                "reponse5": data["reponse5"],
+                "reponse1": data.get("reponse1", ""),
+                "reponse2": data.get("reponse2", ""),
+                "reponse3": data.get("reponse3", ""),
+                "reponse4": data.get("reponse4", ""),
+                "reponse5": data.get("reponse5", ""),
                 "completed_at": datetime.datetime.now()
             }}
         )

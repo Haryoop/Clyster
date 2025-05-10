@@ -107,6 +107,7 @@ import ComponentRenderer from "ComponentRenderer.js";
 import ThankYouPage from "ThankYouPage.js";
 import UpdateUserPage from "pages/UpdateUser.js";
 import UpdateCompanyPage from "pages/UpdateCompany.js";
+import FormPage from "pages/Form.js";
 
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -135,6 +136,7 @@ export default function App() {
           <Route path="/eve" element={<EventLandingPage/>} />
           <Route path="/UpdateUser" element={<UpdateUserPage/>} />
           <Route path="/UpdateCompany" element={<UpdateCompanyPage/>} />
+          <Route path="/Form" element={<FormPage/>} />
 
 
 
